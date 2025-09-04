@@ -1,0 +1,62 @@
+{
+  "name": "libtropic_platformio",
+  "version": "0.1.0",
+  "description": "Libtropic library for PlatformIO with Raspberry Pi Pico",
+  "keywords": "tropic, pico, wrapper",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Caza20/libtropic-platformio.git"
+  },
+  "authors": [
+    {
+      "name": "Wuard",
+      "email": ""
+    }
+  ],
+  "license": "MIT",
+  "dependencies": [],
+  "frameworks": "arduino",
+  "platforms": [
+    "https://github.com/maxgerhardt/platform-raspberrypi.git"
+   ],
+  "build": {
+    "srcDir": "src",
+    "includeDir": "inc",
+    "srcFilter": [
+      "+<*>",
+      "+<../libtropic/src/>",
+      "+<../libtropic/hal/port/rpi_pico>",
+      "+<../libtropic/keys/>",
+      "+<../libtropic/hal/crypto/trezor_crypto/lt_crypto_trezor_aesgcm.c>",
+      "+<../libtropic/hal/crypto/trezor_crypto/lt_crypto_trezor_ed25519.c>",
+      "+<../libtropic/hal/crypto/trezor_crypto/lt_crypto_trezor_ecdsa.c>",
+      "+<../libtropic/hal/crypto/trezor_crypto/lt_crypto_trezor_sha256.c>",
+      "+<../libtropic/hal/crypto/trezor_crypto/lt_crypto_trezor_x25519.c>",
+      "+<../libtropic/hal/crypto/>",
+      "+<../libtropic/vendor/trezor_crypto/aes/>",
+      "+<../libtropic/vendor/trezor_crypto/ed25519-donna>",
+      "+<../libtropic/vendor/trezor_crypto/blake2b.c>",
+      "+<../libtropic/vendor/trezor_crypto/blake256.c>",
+      "+<../libtropic/vendor/trezor_crypto/groestl.c>",
+      "+<../libtropic/vendor/trezor_crypto/hasher.c>",
+      "+<../libtropic/vendor/trezor_crypto/hmac.c>",
+      "+<../libtropic/vendor/trezor_crypto/memzero.c>",
+      "+<../libtropic/vendor/trezor_crypto/ripemd160.c>",
+      "+<../libtropic/vendor/trezor_crypto/sha2.c>",
+      "+<../libtropic/vendor/trezor_crypto/sha3.c>",
+      "-<../libtropic/vendor/trezor_crypto/aes/aestst.c>"
+    ],
+    "flags": [
+      "-DLT_USE_TREZOR_CRYPTO",
+      "-DLT_HELPERS",
+      "-DAES_VAR",                  
+      "-Ilibtropic/include",       
+      "-Ilibtropic/src",    
+      "-Ilibtropic/keys",       
+      "-Ilibtropic/vendor/trezor_crypto", 
+      "-Ilibtropic/hal/crypto/trezor_crypto",
+      "-Ilibtropic/TROPIC01_fw_update_files/boot_v_2_0_1/fw_v_1_0_0",
+      "-Ilibtropic/hal/port/rpi_pico"
+    ]
+  }
+}
