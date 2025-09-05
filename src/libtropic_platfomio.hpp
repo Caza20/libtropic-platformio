@@ -6,6 +6,8 @@ extern "C" {
     #include "../libtropic/include/libtropic_logging.h"
     #include "../libtropic/include/libtropic_common.h"
     #include "../libtropic/include/libtropic_examples.h"
+    #include "../libtropic/include/lt_l2.h"
+    #include "../libtropic/include/lt_l3.h"
     #include "../libtropic/hal/port/rpi_pico/lt_port_rpi_pico.h"
     #include "string.h"
     #include <inttypes.h>
