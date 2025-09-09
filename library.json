@@ -25,6 +25,8 @@
     "srcFilter": [
       "+<*>",
       "+<../libtropic/src/>",
+      "+<../libtropic/src/functions>",
+      "+<../libtropic/src/utils>",
       "+<../libtropic/hal/port/rpi_pico>",
       "+<../libtropic/keys/>",
       "+<../libtropic/hal/crypto/trezor_crypto/lt_crypto_trezor_aesgcm.c>",
@@ -44,12 +46,16 @@
       "+<../libtropic/vendor/trezor_crypto/ripemd160.c>",
       "+<../libtropic/vendor/trezor_crypto/sha2.c>",
       "+<../libtropic/vendor/trezor_crypto/sha3.c>",
+      "+<../libtropic/vendor/TROPIC01_fw_update_files>",
+      "+<../libtropic/hal/crypto/trezor_crypto>",
       "-<../libtropic/vendor/trezor_crypto/aes/aestst.c>"
     ],
     "flags": [
       "-DLT_USE_TREZOR_CRYPTO",
       "-DLT_HELPERS",
-      "-DAES_VAR",                  
+      "-DAES_VAR", 
+      "-Iinc",
+      "-Iinc/functions",                 
       "-Ilibtropic/include",       
       "-Ilibtropic/src",    
       "-Ilibtropic/keys",       

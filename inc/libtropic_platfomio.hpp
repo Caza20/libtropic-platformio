@@ -8,10 +8,15 @@ extern "C" {
     #include "../libtropic/include/libtropic_examples.h"
     #include "../libtropic/include/lt_l2.h"
     #include "../libtropic/include/lt_l3.h"
+    #include "../libtropic/TROPIC01_fw_update_files/boot_v_1_0_1/fw_v_1_0_0/fw_CPU.h"
+    #include "../libtropic/TROPIC01_fw_update_files/boot_v_1_0_1/fw_v_1_0_0/fw_SPECT.h"
     #include "../libtropic/hal/port/rpi_pico/lt_port_rpi_pico.h"
     #include "string.h"
     #include <inttypes.h>
 }
+
+#include "functions/show_chip_id_and_fwver.hpp"
+#include "functions/secure_session_and_ping.hpp"
 
 /* ---------------- SPI ---------------- */
 #define LT_SPI_PORT spi0
@@ -31,6 +36,12 @@ class Libtropic {
 public:
     Libtropic();
     void begin();
+    void showChipIdAndFwVer();
+    void secureSessionAndPing();
+
+private:
+    lt_handle_t __lt_handle__;
+    lt_dev_pico __device__;
 };
 
 #endif
