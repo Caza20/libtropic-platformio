@@ -24,9 +24,18 @@ extern "C" {
 
 // SPI pins (adjust them to your actual connection)
 #define SPI_SCK_PIN  2   // GPIO2 → SCK
-#define SPI_MOSI_PIN 3   // GPIO3 → MOSI
-#define SPI_MISO_PIN 4   // GPIO4 → MISO
+#define SPI_MOSI_PIN 3   // GPIO3 → MOSI - SDI
+#define SPI_MISO_PIN 4   // GPIO4 → MISO - SDO
 #define SPI_CS_PIN   5   // GPIO5 → Chip Select
+
+/* ---------------- UART 1 ---------------- */
+#define LT_UART_PORT uart1
+#define UART_BAUDRATE 115200  
+
+// UART pins (adjust them to your actual connection)
+#define UART_TX_PIN 8   // GPIO8 → UART1_TX
+#define UART_RX_PIN 9   // GPIO9 → UART1_RX
+
 
 /* Exported macro ------------------------------------------------------------*/
 #define COUNTOF(__BUFFER__)   (sizeof(__BUFFER__) / sizeof(*(__BUFFER__)))
@@ -35,13 +44,23 @@ extern "C" {
 class Libtropic {
 public:
     Libtropic();
-    void begin();
+    //* Initialize libtropic and UART
+    void begin(int tx, int rx, uint32_t baud = 9600, uart_inst_t* uart_id = uart1);
+
+    //* UART functions
+    void sendData(const String& data);
+    String readData();
+
+    //* libtropic functions
     void showChipIdAndFwVer();
     void secureSessionAndPing();
 
 private:
     lt_handle_t __lt_handle__;
     lt_dev_pico __device__;
+
+    SerialUART* serialPort;
+    String inputDataBuffer = "";
 };
 
 #endif

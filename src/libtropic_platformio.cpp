@@ -2,9 +2,99 @@
 #include <stdio.h>
 #include <Arduino.h>
 
-
+// Only for FW update function
 #define FW_APP_UPDATE_BANK FW_BANK_FW1
 #define FW_SPECT_UPDATE_BANK FW_BANK_SPECT1
+
+
+Libtropic::Libtropic() {
+    serialPort = nullptr;
+}
+
+void Libtropic::begin(int tx, int rx, uint32_t baud, uart_inst_t* uart_id) {
+    serialPort = new SerialUART(uart_id, tx, rx);
+    serialPort->begin(baud, SERIAL_8N1);
+
+    Serial.println("============== Inizializing TROPIC01... ==============");
+
+   // libtropic related code BEGIN
+   __lt_handle__ = {0};
+
+#if LT_SEPARATE_L3_BUFF
+    uint8_t l3_buffer[L3_PACKET_MAX_SIZE] __attribute__((aligned(16))) = {0};
+    __lt_handle__.l3.buff = l3_buffer;
+    __lt_handle__.l3.buff_len = sizeof(l3_buffer);
+#endif
+
+    // Device (adapted for Pico)
+    __device__ = {0};
+
+    __device__.spi_instance = LT_SPI_PORT;
+    __device__.spi_baudrate = SPI_BAUDRATE;
+    __device__.cs_pin = SPI_CS_PIN;
+    __device__.pin_miso = SPI_MISO_PIN;
+    __device__.pin_mosi = SPI_MOSI_PIN;
+    __device__.pin_sck = SPI_SCK_PIN;
+
+    __lt_handle__.l2.device = &__device__;
+
+#ifdef LT_BUILD_EXAMPLES
+    #include "lt_ex_registry.c.inc"
+    UNUSED(__lt_ex_return_val__);
+#endif
+
+//    lt_show_chip_id_and_fwver(&__lt_handle__);
+
+//    delay(5000);
+   
+//    lt_ex_hello_world(&__lt_handle__);
+
+//    lt_ex_hello_world_separate_API(&__lt_handle__);
+
+    // lt_ex_fw_update(&__lt_handle__);
+   // libtropic related code END
+
+}
+
+//**************************************************
+//*               UART functions
+//************************************************** 
+
+// Send data via UART
+void Libtropic::sendData(const String& data) {
+      if (serialPort) serialPort->print(data);
+}
+
+// Read data from UART
+String Libtropic::readData() {
+  if (serialPort) {
+    while (serialPort->available()) {
+      char c = (char)serialPort->read();
+      if (c == ';') {  // end of the command
+        String cmd = inputDataBuffer;
+        inputDataBuffer = "";
+        return cmd;
+      } else {
+        inputDataBuffer += c;
+      }
+    }
+  }
+  return "";  // no data available
+}
+
+
+//**************************************************
+//*           libtropic functions
+//************************************************** 
+void Libtropic::showChipIdAndFwVer() {
+    Serial.println("============== Reading Chip ID and FW version... ==============");
+    lt_show_chip_id_and_fwver(&__lt_handle__);
+}
+
+void Libtropic::secureSessionAndPing() {
+    Serial.println("============== Establishing secure session and ping... ==============");
+    lt_secure_session_and_ping(&__lt_handle__);
+}
 
 int lt_ex_fw_update(lt_handle_t *h)
 {
@@ -111,58 +201,3 @@ int lt_ex_fw_update(lt_handle_t *h)
 
     return 0;
 }
-
-Libtropic::Libtropic() {}
-
-void Libtropic::begin() {
-    Serial.println("============== Inizializing TROPIC01... ==============");
-
-   // libtropic related code BEGIN
-   __lt_handle__ = {0};
-
-#if LT_SEPARATE_L3_BUFF
-    uint8_t l3_buffer[L3_PACKET_MAX_SIZE] __attribute__((aligned(16))) = {0};
-    __lt_handle__.l3.buff = l3_buffer;
-    __lt_handle__.l3.buff_len = sizeof(l3_buffer);
-#endif
-
-    // Device (adapted for Pico)
-    __device__ = {0};
-
-    __device__.spi_instance = LT_SPI_PORT;
-    __device__.spi_baudrate = SPI_BAUDRATE;
-    __device__.cs_pin = SPI_CS_PIN;
-    __device__.pin_miso = SPI_MISO_PIN;
-    __device__.pin_mosi = SPI_MOSI_PIN;
-    __device__.pin_sck = SPI_SCK_PIN;
-
-    __lt_handle__.l2.device = &__device__;
-
-#ifdef LT_BUILD_EXAMPLES
-    #include "lt_ex_registry.c.inc"
-    UNUSED(__lt_ex_return_val__);
-#endif
-
-//    lt_show_chip_id_and_fwver(&__lt_handle__);
-
-//    delay(5000);
-   
-//    lt_ex_hello_world(&__lt_handle__);
-
-//    lt_ex_hello_world_separate_API(&__lt_handle__);
-
-    // lt_ex_fw_update(&__lt_handle__);
-   // libtropic related code END
-
-}
-
-void Libtropic::showChipIdAndFwVer() {
-    Serial.println("============== Reading Chip ID and FW version... ==============");
-    lt_show_chip_id_and_fwver(&__lt_handle__);
-}
-
-void Libtropic::secureSessionAndPing() {
-    Serial.println("============== Establishing secure session and ping... ==============");
-    lt_secure_session_and_ping(&__lt_handle__);
-}
-
