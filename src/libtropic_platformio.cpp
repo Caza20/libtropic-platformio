@@ -44,6 +44,8 @@ void Libtropic::begin(int tx, int rx, uint32_t baud, uart_inst_t* uart_id) {
     UNUSED(__lt_ex_return_val__);
 #endif
 
+  lt_init(&__lt_handle__);
+
 //    lt_show_chip_id_and_fwver(&__lt_handle__);
 
 //    delay(5000);
@@ -163,7 +165,7 @@ void Libtropic::handleCommand(CommandId id, const String &originalCmd) {
     }
         
     case CMD_FW_VERSION:
-      sendData("OK:fw_version:1.0.3\n");
+      sendData(cmd_fw_version_func());
       break;
     case CMD_SESSION_PING:
       sendData("OK:session_ping\n");

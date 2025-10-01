@@ -19,6 +19,7 @@ extern "C" {
 #include "functions/secure_session_and_ping.hpp"
 
 #include "commands/cmd_chip_id_func.hpp"
+#include "commands/cmd_fw_version_func.hpp"
 
 /* ---------------- SPI ---------------- */
 #define LT_SPI_PORT spi0

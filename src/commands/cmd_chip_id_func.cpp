@@ -3,8 +3,7 @@
 /**
  * @file cmd_chip_id_func.cpp
  * @author Wuard
- * @brief This function establishes a secure communication and sends a ping and the tropic returns it.
- *        Based on the 'lt_ex_hello_world_separate_API.c' example from the libtropic library.
+ * @brief This function response the chip id to send by uart.
  *
  * @license For the license see file LICENSE.txt file in the root directory of this source tree.
  */
@@ -13,10 +12,10 @@
 //*                     Principal functions                            *
 //**********************************************************************
 
-String response = "";
-
 String cmd_chip_id_func() {
-    lt_init(&__lt_handle__);
+    String response = "";
+
+    // lt_init(&__lt_handle__);
     
     struct lt_chip_id_t chip_id = {0};
     //* read chip ID
