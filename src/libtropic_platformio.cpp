@@ -6,6 +6,7 @@
 #define FW_APP_UPDATE_BANK FW_BANK_FW1
 #define FW_SPECT_UPDATE_BANK FW_BANK_SPECT1
 
+lt_handle_t __lt_handle__;
 
 Libtropic::Libtropic() {
     serialPort = nullptr;
@@ -60,18 +61,18 @@ void Libtropic::begin(int tx, int rx, uint32_t baud, uart_inst_t* uart_id) {
 //*               UART functions
 //************************************************** 
 
-// Send data via UART
+//* Send data via UART
 void Libtropic::sendData(const String& data) {
       if (serialPort) serialPort->print(data);
 }
 
-// Read data from UART
+//* Read data from UART
 String Libtropic::readData() {
   if (serialPort) {
     while (serialPort->available()) {
       char c = (char)serialPort->read();
       if (c == ';') {  // end of the command
-        String cmd = inputDataBuffer;
+        String cmd = inputDataBuffer + ";";
         inputDataBuffer = "";
         return cmd;
       } else {
@@ -82,6 +83,97 @@ String Libtropic::readData() {
   return "";  // no data available
 }
 
+
+//**************************************************
+//*          Command processing functions
+//************************************************** 
+
+//* Función principal: valida formato y procesa cada comando separado por coma
+void Libtropic::processCommand(const String &commands) {
+  if (commands.length() == 0) {
+    sendData("ERR:EMPTY_COMMAND\n");
+    return;
+  }
+
+  // To do a copy we can modify
+  String s = commands;
+  s.trim();
+  
+  // 1) Validate format: must end with ';'
+  if (s.length() == 0 || s.charAt(s.length() - 1) != ';') {
+    sendData("ERR:INVALID_FORMAT\n");
+    return;
+  }
+
+  // 2) Delete the ending ';'
+  s = s.substring(0, s.length() - 1);
+
+  // 3) Iterates through tokens separated by "," and processes them one by one
+  int start = 0;
+  while (start <= s.length()) {
+    int commaIdx = s.indexOf(',', start);
+    String token;
+    if (commaIdx == -1) {
+      // last token (or only one)
+      token = s.substring(start);
+      start = s.length() + 1; // while output
+    } else {
+      token = s.substring(start, commaIdx);
+      start = commaIdx + 1; // move after comma
+    }
+
+    token.trim(); // delete leading/trailing spaces
+
+    if (token.length() == 0) {
+      // token empty: skip it (optional: you could report error)
+      continue;
+    }
+
+    // 4) Map token to enum (to use switch later)
+    CommandId id = parseCommand(token);
+
+    // 5) Execute (handle) — can send response or execute action
+    handleCommand(id, token);
+  }
+
+  // end: all tokens processed
+}
+
+//* Converts the token to a CommandId (case-insensitive)
+Libtropic::CommandId Libtropic::parseCommand(const String &cmd) {
+  String c = cmd;
+  c.trim();
+  c.toLowerCase(); // to compare in lowercase
+
+  if (c == "chip_id") return CMD_CHIP_ID;
+  if (c == "fw_version") return CMD_FW_VERSION;
+  if (c == "session_ping") return CMD_SESSION_PING;
+  return CMD_UNKNOWN;
+}
+
+//* Executes the corresponding action to th command
+void Libtropic::handleCommand(CommandId id, const String &originalCmd) {
+  switch (id) {
+
+    //? get chip ID
+    case CMD_CHIP_ID: {
+        // Call the function and send the response
+        sendData(cmd_chip_id_func());
+      break;
+    }
+        
+    case CMD_FW_VERSION:
+      sendData("OK:fw_version:1.0.3\n");
+      break;
+    case CMD_SESSION_PING:
+      sendData("OK:session_ping\n");
+      break;
+    default:
+      // comando no reconocido
+      sendData("ERR:UNKNOWN_COMMAND:" + originalCmd + "\n");
+      break;
+  }
+}
 
 //**************************************************
 //*           libtropic functions

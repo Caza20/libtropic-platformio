@@ -18,6 +18,8 @@ extern "C" {
 #include "functions/show_chip_id_and_fwver.hpp"
 #include "functions/secure_session_and_ping.hpp"
 
+#include "commands/cmd_chip_id_func.hpp"
+
 /* ---------------- SPI ---------------- */
 #define LT_SPI_PORT spi0
 #define SPI_BAUDRATE 1000000  // 1 MHz, can be adjusted according to the device
@@ -40,6 +42,7 @@ extern "C" {
 /* Exported macro ------------------------------------------------------------*/
 #define COUNTOF(__BUFFER__)   (sizeof(__BUFFER__) / sizeof(*(__BUFFER__)))
 
+extern lt_handle_t __lt_handle__; 
 
 class Libtropic {
 public:
@@ -51,16 +54,30 @@ public:
     void sendData(const String& data);
     String readData();
 
+    //* Commands
+    void processCommand(const String &commands);
+
     //* libtropic functions
     void showChipIdAndFwVer();
     void secureSessionAndPing();
 
 private:
-    lt_handle_t __lt_handle__;
+    
     lt_dev_pico __device__;
 
     SerialUART* serialPort;
     String inputDataBuffer = "";
+
+    //* Commands
+    enum CommandId { 
+        CMD_UNKNOWN, 
+        CMD_CHIP_ID, 
+        CMD_FW_VERSION, 
+        CMD_SESSION_PING 
+    };
+
+    CommandId parseCommand(const String &cmd);
+    void handleCommand(CommandId id, const String &originalCmd);
 };
 
 #endif
