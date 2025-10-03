@@ -20,6 +20,7 @@ extern "C" {
 
 #include "commands/cmd_chip_id_func.hpp"
 #include "commands/cmd_fw_version_func.hpp"
+#include "commands/cmd_bootloader_version_func.hpp"
 
 /* ---------------- SPI ---------------- */
 #define LT_SPI_PORT spi0
@@ -74,6 +75,7 @@ private:
         CMD_UNKNOWN, 
         CMD_CHIP_ID, 
         CMD_FW_VERSION, 
+        CMD_BOOTLOADER_VERSION,
         CMD_SESSION_PING 
     };
 

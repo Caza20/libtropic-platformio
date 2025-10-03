@@ -43,7 +43,7 @@ String cmd_fw_version_func() {
             String fw_ver_1 = String(buff_2X);
             sprintf(buff_2X, "%02X", fw_ver[0]); 
             String fw_ver_0 = String(buff_2X);
-            response = "RISC-V application FW version = " + fw_ver_3 + "." + fw_ver_2 + "." + fw_ver_1 + " (+ ." + fw_ver_0 + "):";
+            response = "RISC-V application FW version = " + fw_ver_3 + "." + fw_ver_2 + "." + fw_ver_1 + " (+ ." + fw_ver_0 + ");";
         }
         else {
             response = "ERR:FAILED_TO_GET_RISCV_FW_VERSION;\n";
@@ -62,7 +62,7 @@ String cmd_fw_version_func() {
             String fw_ver_1 = String(buff_2X);
             sprintf(buff_2X, "%02X", fw_ver[0]); 
             String fw_ver_0 = String(buff_2X);
-            response += "SPECT firmware version= " + fw_ver_3 + "." + fw_ver_2 + "." + fw_ver_1 + "  (+ ." + fw_ver_0 + "):\n";
+            response += "SPECT firmware version= " + fw_ver_3 + "." + fw_ver_2 + "." + fw_ver_1 + "  (+ ." + fw_ver_0 + ");\n";
         }
         else {
             response = "ERR:FAILED_TO_GET_SPECT_FW_VERSION;\n";
@@ -76,3 +76,5 @@ String cmd_fw_version_func() {
 
     return response;
 }
+
+

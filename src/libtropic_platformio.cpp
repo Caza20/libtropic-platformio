@@ -149,6 +149,7 @@ Libtropic::CommandId Libtropic::parseCommand(const String &cmd) {
 
   if (c == "chip_id") return CMD_CHIP_ID;
   if (c == "fw_version") return CMD_FW_VERSION;
+  if (c == "bootloader_version") return CMD_BOOTLOADER_VERSION;
   if (c == "session_ping") return CMD_SESSION_PING;
   return CMD_UNKNOWN;
 }
@@ -167,6 +168,11 @@ void Libtropic::handleCommand(CommandId id, const String &originalCmd) {
     case CMD_FW_VERSION:
       sendData(cmd_fw_version_func());
       break;
+
+    case CMD_BOOTLOADER_VERSION:
+      sendData(cmd_bootloader_version_func());
+      break;
+      
     case CMD_SESSION_PING:
       sendData("OK:session_ping\n");
       break;
