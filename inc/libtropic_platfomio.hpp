@@ -18,10 +18,6 @@ extern "C" {
 #include "functions/show_chip_id_and_fwver.hpp"
 #include "functions/secure_session_and_ping.hpp"
 
-#include "commands/cmd_chip_id_func.hpp"
-#include "commands/cmd_fw_version_func.hpp"
-#include "commands/cmd_bootloader_version_func.hpp"
-
 /* ---------------- SPI ---------------- */
 #define LT_SPI_PORT spi0
 #define SPI_BAUDRATE 1000000  // 1 MHz, can be adjusted according to the device
@@ -32,15 +28,6 @@ extern "C" {
 #define SPI_MISO_PIN 4   // GPIO4 → MISO - SDO
 #define SPI_CS_PIN   5   // GPIO5 → Chip Select
 
-/* ---------------- UART 1 ---------------- */
-#define LT_UART_PORT uart1
-#define UART_BAUDRATE 115200  
-
-// UART pins (adjust them to your actual connection)
-#define UART_TX_PIN 8   // GPIO8 → UART1_TX
-#define UART_RX_PIN 9   // GPIO9 → UART1_RX
-
-
 /* Exported macro ------------------------------------------------------------*/
 #define COUNTOF(__BUFFER__)   (sizeof(__BUFFER__) / sizeof(*(__BUFFER__)))
 
@@ -50,14 +37,7 @@ class Libtropic {
 public:
     Libtropic();
     //* Initialize libtropic and UART
-    void begin(int tx, int rx, uint32_t baud = 9600, uart_inst_t* uart_id = uart1);
-
-    //* UART functions
-    void sendData(const String& data);
-    String readData();
-
-    //* Commands
-    void processCommand(const String &commands);
+    void begin();
 
     //* libtropic functions
     void showChipIdAndFwVer();
@@ -67,20 +47,7 @@ private:
     
     lt_dev_pico __device__;
 
-    SerialUART* serialPort;
-    String inputDataBuffer = "";
-
-    //* Commands
-    enum CommandId { 
-        CMD_UNKNOWN, 
-        CMD_CHIP_ID, 
-        CMD_FW_VERSION, 
-        CMD_BOOTLOADER_VERSION,
-        CMD_SESSION_PING 
-    };
-
-    CommandId parseCommand(const String &cmd);
-    void handleCommand(CommandId id, const String &originalCmd);
+    
 };
 
 #endif
