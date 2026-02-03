@@ -270,6 +270,11 @@ class Tropic01 {
      */
     lt_ret_t macAndDestroy(const lt_mac_and_destroy_slot_t slot, const uint8_t dataOut[], uint8_t dataIn[]);
 
+    //************************************************************************************ */
+    // Additional functions for rpi-pico
+
+    lt_ret_t getChipID(lt_chip_id_t &chipId);
+
    private:
     lt_dev_pico device;
     lt_ctx_trezor_crypto_t cryptoCtx;
