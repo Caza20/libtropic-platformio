@@ -271,21 +271,26 @@ class Tropic01 {
     lt_ret_t macAndDestroy(const lt_mac_and_destroy_slot_t slot, const uint8_t dataOut[], uint8_t dataIn[]);
 
     //************************************************************************************ */
-    //***********************   Additional functions     ********************************* */
+    //************************** Additional functions for rpi-pico  *************************
     //************************************************************************************ */
-    // Additional functions for rpi-pico
 
     lt_handle_t* getHandle();
 
-    // chip id
+    // chip_id
     lt_ret_t getChipID(lt_chip_id_t &chipId);
+    String printChipID(lt_chip_id_t chip_id); //for print to uart
 
     // bootloader version
     lt_ret_t getBootloaderVersion(uint8_t *fw_ver);
+    String printBootloaderVersion(uint8_t *fw_ver); //for print to uart
     String get_headers_v1();
     String header_boot_v1_0_1(uint8_t *data, lt_bank_id_t bank_id);
     String get_headers_v2();
     String header_boot_v2_0_1(uint8_t *data, lt_bank_id_t bank_id);
+
+    // secure session 
+    lt_ret_t secureSessionON(const lt_pkey_index_t pkey_index, const uint8_t shipriv[], const uint8_t shipub[]);
+    lt_ret_t secureSessionOFF(void);
 
    private:
     lt_dev_pico device;
