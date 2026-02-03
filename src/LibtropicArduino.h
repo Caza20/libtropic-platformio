@@ -275,6 +275,8 @@ class Tropic01 {
     //************************************************************************************ */
     // Additional functions for rpi-pico
 
+    lt_handle_t* getHandle();
+
     // chip id
     lt_ret_t getChipID(lt_chip_id_t &chipId);
 

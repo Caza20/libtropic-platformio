@@ -141,6 +141,10 @@ lt_ret_t Tropic01::macAndDestroy(const lt_mac_and_destroy_slot_t slot, const uin
 
 // **************************************************************************
 
+lt_handle_t* Tropic01::getHandle() {
+    return &this->handle;
+}
+
 lt_ret_t Tropic01::getChipID(lt_chip_id_t &chipId)
 {
     return lt_get_info_chip_id(&this->handle, &chipId);
