@@ -736,3 +736,75 @@ lt_ret_t Tropic01::secureSessionOFF(void)
 
     return ret;
 }
+
+//---------------
+
+lt_ret_t Tropic01::getFWVersion(uint8_t *fw_ver)
+{
+
+    lt_ret_t ret = LT_OK;
+
+    ret = lt_reboot(&this->handle, TR01_REBOOT);
+    if (ret != LT_OK) {
+        lt_deinit(&this->handle);
+        return ret;
+    }
+
+    lt_tr01_mode_t mode = LT_TR01_APPLICATION;
+
+    ret = lt_get_tr01_mode(&this->handle, &mode);
+    if (ret == LT_OK) {
+        return ret;
+    }
+    else {
+        lt_deinit(&this->handle);
+        return ret;
+    }
+
+    return ret;
+}
+
+String Tropic01::printFWVersion(uint8_t *fw_ver)
+{
+    String response = "";
+
+    // Getting RISCV app firmware version
+    if (lt_get_info_riscv_fw_ver(&this->handle, fw_ver) == LT_OK) {
+        char buff_2X[3]; 
+        sprintf(buff_2X, "%02X", fw_ver[3]); 
+        String fw_ver_3 = String(buff_2X);
+        sprintf(buff_2X, "%02X", fw_ver[2]); 
+        String fw_ver_2 = String(buff_2X);
+        sprintf(buff_2X, "%02X", fw_ver[1]); 
+        String fw_ver_1 = String(buff_2X);
+        sprintf(buff_2X, "%02X", fw_ver[0]); 
+        String fw_ver_0 = String(buff_2X);
+        response = "OK:RISC-V application FW version = " + fw_ver_3 + "." + fw_ver_2 + "." + fw_ver_1 + " (+ ." + fw_ver_0 + "):";
+    }
+    else {
+        response = "ERR:FAILED_TO_GET_RISCV_FW_VERSION;\n";
+        lt_deinit(&this->handle);
+        return response;
+    }
+
+        
+    if (lt_get_info_spect_fw_ver(&this->handle, fw_ver) == LT_OK) {
+        char buff_2X[3]; 
+        sprintf(buff_2X, "%02X", fw_ver[3]); 
+        String fw_ver_3 = String(buff_2X);
+        sprintf(buff_2X, "%02X", fw_ver[2]); 
+        String fw_ver_2 = String(buff_2X);
+        sprintf(buff_2X, "%02X", fw_ver[1]); 
+        String fw_ver_1 = String(buff_2X);
+        sprintf(buff_2X, "%02X", fw_ver[0]); 
+        String fw_ver_0 = String(buff_2X);
+        response += "SPECT firmware version= " + fw_ver_3 + "." + fw_ver_2 + "." + fw_ver_1 + "  (+ ." + fw_ver_0 + ");\n";
+    }
+    else {
+        response = "ERR:FAILED_TO_GET_SPECT_FW_VERSION;\n";
+        lt_deinit(&this->handle);
+        return response;
+    }
+
+    return response;
+}
