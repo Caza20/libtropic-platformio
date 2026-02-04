@@ -296,6 +296,9 @@ class Tropic01 {
     lt_ret_t getFWVersion(uint8_t *fw_ver);
     String printFWVersion(uint8_t *fw_ver); //for print to uart
 
+    // random value
+    lt_ret_t getRandomValue(uint8_t *rand_buf, const uint16_t rand_len);
+
    private:
     lt_dev_pico device;
     lt_ctx_trezor_crypto_t cryptoCtx;
