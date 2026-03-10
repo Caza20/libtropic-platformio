@@ -1,4 +1,0 @@
-[submodule "libtropic"]
-    path = libtropic
-    url = https://github.com/Caza20/libtropic
-    branch = develop
