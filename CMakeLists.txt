@@ -8,10 +8,14 @@
 cmake_minimum_required(VERSION 3.21.0)
 project(HALCALFilesExtractor NONE)
 
-# Expected variables:
-#  - LT_CAL
-#  - LT_PLATFORM  (arduino | esp32 | rpi_pico)
+# Select HAL based on LT_PLATFORM (default to arduino).
+# Normalize LT_PLATFORM to match on-disk folder names (e.g. rpi_pico -> rpi-pico).
+if(NOT LT_PLATFORM)
+    set(LT_PLATFORM "arduino")
+endif()
+string(REPLACE "_" "-" LT_PLATFORM_DIR "${LT_PLATFORM}")
 
+# Function to convert a CMake list into a JSON array string
 function(list_to_json_array list_var out_var)
     set(json "[")
     list(LENGTH ${list_var} list_len)
@@ -29,15 +33,15 @@ function(list_to_json_array list_var out_var)
     set(${out_var} "${json}" PARENT_SCOPE)
 endfunction()
 
-# ---------------- CAL ----------------
+
+# Add the CAL directory
 add_subdirectory("libtropic/cal/${LT_CAL}")
 
-# ---------------- HAL ----------------
-if(LT_PLATFORM STREQUAL "rpi_pico")
-    message(STATUS "Using RP2040 (Raspberry Pi Pico) HAL")
-    add_subdirectory("libtropic/hal/rpi-pico")
+# Add the HAL directory
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/libtropic/hal/${LT_PLATFORM_DIR}/CMakeLists.txt")
+    add_subdirectory("libtropic/hal/${LT_PLATFORM_DIR}")
 else()
-    message(STATUS "Using Arduino HAL")
+    message(WARNING "LT_PLATFORM='${LT_PLATFORM}' not found; falling back to HAL 'arduino'")
     add_subdirectory("libtropic/hal/arduino")
 endif()
 
