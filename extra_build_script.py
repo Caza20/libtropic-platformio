@@ -7,31 +7,11 @@ import platform
 
 Import("env", "projenv")
 
-# Ensure project compiles C++ with C++17 (affects PlatformIO compile, not the CMake subprocess)
-env.Append(CXXFLAGS=["-std=gnu++17"])
-projenv.Append(CXXFLAGS=["-std=gnu++17"])
-
 LIB_NAME_ON_DISK = "LibtropicArduino"
 BUILD_TARGET = "tropic"
-
-board = env.subst("$BOARD")
-platform_name = env.subst("$PIOPLATFORM")
-
-
-LIBTROPIC_DEFAULT_BUILD_FLAGS = []
-
-if board == "pico":
-    # Raspberry Pi Pico (RP2040)
-    LIBTROPIC_DEFAULT_BUILD_FLAGS.extend([
-        "-DLT_PLATFORM=rpi_pico",
-        "-DLT_CAL=trezor_crypto"
-    ])
-else:
-    # ESP32 / others
-    LIBTROPIC_DEFAULT_BUILD_FLAGS.extend([
-        "-DLT_PLATFORM=arduino",
-        "-DLT_CAL=mbedtls_v4"
-    ])
+LIBTROPIC_DEFAULT_BUILD_FLAGS = [
+    "-DLT_CAL=mbedtls_v4"
+]
 
 # 1) Find PROJECT_LIBDEPS_DIR and current PIO environment name
 libdeps_root = env.get("PROJECT_LIBDEPS_DIR")
@@ -86,8 +66,7 @@ cmake_args = [
     "-B", str(libtropic_build_dir),
     f"-DCMAKE_C_FLAGS={c_flags}",
     f"-DCMAKE_CXX_FLAGS={cxx_flags}",
-    "-DCMAKE_SYSTEM_NAME=Generic",
-    "-DCMAKE_TRY_COMPILE_TARGET_TYPE=STATIC_LIBRARY"
+    "-DCMAKE_SYSTEM_NAME=Generic"
 ]
 
 # Add linker flags only if not on macOS (nosys.specs is specific to ARM GCC)
@@ -113,18 +92,10 @@ flags_for_libtropic.extend(LIBTROPIC_DEFAULT_BUILD_FLAGS)
 
 # Get the LT_CAL flag
 cal_flag = None
-platform_flag = None
-
 for flag in flags_for_libtropic:
     if flag.startswith("-DLT_CAL="):
         cal_flag = flag
-    elif flag.startswith("-DLT_PLATFORM="):
-        platform_flag = flag
-
-if not cal_flag:
-    raise RuntimeError("LT_CAL not defined")
-if not platform_flag:
-    raise RuntimeError("LT_PLATFORM not defined")
+        break
 
 # Append the extracted flags to CMake args
 cmake_args.extend(flags_for_libtropic)
@@ -133,13 +104,7 @@ cmake_args.extend(flags_for_libtropic)
 hal_cal_vars_build_dir.mkdir(parents=True, exist_ok=True)
 
 # Important: run the generator with the library root (not external_root) so top-level CMakeLists can write the JSON
-subprocess.check_call([
-    "cmake",
-    "-S", str(library_dir),
-    "-B", str(hal_cal_vars_build_dir),
-    cal_flag,
-    platform_flag
-])
+subprocess.check_call(["cmake", "-S", str(library_dir), "-B", str(hal_cal_vars_build_dir), cal_flag])
 
 # Ensure the JSON was produced
 if not hal_cal_vars_json_path.is_file():
@@ -304,20 +269,6 @@ for d in hal_dirs + cal_dirs:
         env.Append(CPPPATH=[d])
         cpppaths_filtered.append(d)
         print("Added impl-parent to CPPPATH:", d)
-
-# Add necessary CPPDEFINES for the selected CAL implementation
-env.Append(CPPDEFINES=[
-        "LT_USE_TREZOR_CRYPTO",
-        "USE_AES",
-        "USE_AES_GCM",
-        "USE_HMAC",
-        "USE_HASHER",
-        "USE_SHA256",
-        "USE_CURVE25519",
-        "AES_VAR",
-        "USE_INSECURE_PRNG",
-    ]
-)
 
 build_dir_expanded = env.subst("$BUILD_DIR")
 hal_target_dir = str(Path(build_dir_expanded) / ("lib_" + lib_shortname + "_hal"))

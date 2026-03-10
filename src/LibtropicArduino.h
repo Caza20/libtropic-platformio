@@ -303,7 +303,7 @@ class Tropic01 {
     lt_ret_t hashMessage(const uint8_t *message, const uint32_t message_len, uint8_t *hash);
 
     // mcounter
-    lt_ret_t mcounterInit(const lt_mcounter_index_t index, const uint32_t value);
+    lt_ret_t mcounterInit(const lt_mcounter_index_t index, const uint32_t &value);
     lt_ret_t mcounterGet(const lt_mcounter_index_t index, uint32_t &value);
     lt_ret_t mcounterUpdate(const lt_mcounter_index_t index);
 
