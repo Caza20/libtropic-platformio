@@ -97,6 +97,13 @@ for flag in flags_for_libtropic:
         cal_flag = flag
         break
 
+# Get the LT_PLATFORM flag
+platform_flag = None
+for flag in flags_for_libtropic:
+    if flag.startswith("-DLT_PLATFORM="):
+        platform_flag = flag
+        break
+
 # Append the extracted flags to CMake args
 cmake_args.extend(flags_for_libtropic)
 
@@ -104,7 +111,10 @@ cmake_args.extend(flags_for_libtropic)
 hal_cal_vars_build_dir.mkdir(parents=True, exist_ok=True)
 
 # Important: run the generator with the library root (not external_root) so top-level CMakeLists can write the JSON
-subprocess.check_call(["cmake", "-S", str(library_dir), "-B", str(hal_cal_vars_build_dir), cal_flag])
+hal_cmake_args = ["cmake", "-S", str(library_dir), "-B", str(hal_cal_vars_build_dir), cal_flag]
+if platform_flag:
+    hal_cmake_args.append(platform_flag)
+subprocess.check_call(hal_cmake_args)
 
 # Ensure the JSON was produced
 if not hal_cal_vars_json_path.is_file():

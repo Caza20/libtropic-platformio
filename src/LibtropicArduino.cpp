@@ -964,7 +964,7 @@ lt_ret_t Tropic01::hashMessage(const uint8_t *message, const uint32_t message_le
 
 lt_ret_t Tropic01::mcounterInit(const lt_mcounter_index_t index, const uint32_t &value)
 {
-    lt_ret_t ret = lt_mcounter_init(&this->handle, (lt_mcounter_index_t)index, &value);
+    lt_ret_t ret = lt_mcounter_init(&this->handle, (lt_mcounter_index_t)index, value);
     if (ret != LT_OK) {
         // return "ERR:ENCODE;";
         return ret;
@@ -975,7 +975,7 @@ lt_ret_t Tropic01::mcounterInit(const lt_mcounter_index_t index, const uint32_t 
 
 lt_ret_t Tropic01::mcounterGet(const lt_mcounter_index_t index, uint32_t &value)
 {
-    lt_ret_t ret = lt_mcounter_get(&this->handle, (lt_mcounter_index_t)index, value);
+    lt_ret_t ret = lt_mcounter_get(&this->handle, (lt_mcounter_index_t)index, &value);
     if (ret != LT_OK) {
         // return "ERR:ENCODE;";
         return ret;

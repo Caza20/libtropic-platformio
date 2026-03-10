@@ -30,8 +30,13 @@ endfunction()
 # Add the CAL directory
 add_subdirectory("libtropic/cal/${LT_CAL}")
 
-# Add the HAL directory
-add_subdirectory("libtropic/hal/arduino")
+# Add the HAL directory based on LT_PLATFORM (default to arduino)
+if(NOT LT_PLATFORM)
+    set(LT_PLATFORM "arduino")
+endif()
+# Map underscore to hyphen to match directory names (e.g. rpi_pico -> rpi-pico)
+string(REPLACE "_" "-" LT_HAL_DIR "${LT_PLATFORM}")
+add_subdirectory("libtropic/hal/${LT_HAL_DIR}")
 
 # Convert lists from the CMake variables into JSON lists
 list_to_json_array(LT_CAL_SRCS LT_CAL_SRCS_JSON)
