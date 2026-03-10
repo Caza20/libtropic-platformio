@@ -1,0 +1,4 @@
+[submodule "libtropic"]
+	path = libtropic
+	url = https://github.com/tropicsquare/libtropic
+	branch = develop
