@@ -21,8 +21,6 @@
 
 #include "libtropic.h"
 
-
-#include "libtropic_trezor_crypto.h"
 extern "C" {
 #include "lt_sha256.h"  // to do the hash
 }
@@ -310,8 +308,8 @@ class Tropic01 {
     lt_ret_t mcounterUpdate(const lt_mcounter_index_t index);
 
    private:
-    lt_dev_pico device;
-    lt_ctx_trezor_crypto_t cryptoCtx;
+    lt_dev_rpi_pico_t device;
+    lt_ctx_mbedtls_v4_t cryptoCtx;
     lt_handle_t handle;
     bool initialized;
 };
